@@ -1,7 +1,9 @@
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
 from .models import UpdateData
 
-admin.site.register(UpdateData)
+
+@admin.register(UpdateData)
+class UpdateDataAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "email", "phone", "website")
+    search_fields = ("name", "email", "phone", "message")
+    list_per_page = 25

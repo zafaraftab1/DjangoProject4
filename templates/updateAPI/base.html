@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DjangoProject4{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --site-bg: #eff6ff;
+            --site-bg-soft: #f7fbff;
+            --site-ink: #12253f;
+            --site-muted: #5c6d84;
+            --site-brand: #0066d9;
+            --site-brand-deep: #004a9d;
+            --site-line: #d7e5f4;
+            --site-surface: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 10px 24px rgba(11, 35, 70, 0.12);
+        }
+        body.theme-dark {
+            --site-bg: #0f1723;
+            --site-bg-soft: #151f2d;
+            --site-ink: #deecff;
+            --site-muted: #a9bfdc;
+            --site-brand: #2e8dff;
+            --site-brand-deep: #1762c1;
+            --site-line: #233247;
+            --site-surface: rgba(18, 29, 44, 0.88);
+            --shadow-soft: 0 10px 26px rgba(0, 0, 0, 0.45);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--site-ink);
+            background:
+                radial-gradient(circle at 10% 0%, #d6e7ff 0%, transparent 35%),
+                radial-gradient(circle at 90% 10%, #dff2ff 0%, transparent 35%),
+                linear-gradient(180deg, var(--site-bg-soft), var(--site-bg));
+            font-family: "Plus Jakarta Sans", sans-serif;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(12px);
+            background: linear-gradient(120deg, rgba(0, 102, 217, 0.9), rgba(0, 74, 157, 0.9));
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+        }
+        .site-header .inner,
+        .site-footer .inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 18px;
+        }
+        .menu-toggle {
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            padding: 7px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        .nav a.active {
+            background: #fff;
+            color: var(--site-brand-deep);
+            border-color: #fff;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chip-btn {
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            border-radius: 10px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.14);
+            padding: 8px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .page-content {
+            flex: 1;
+        }
+        .site-footer {
+            border-top: 1px solid var(--site-line);
+            background: var(--site-surface);
+            color: var(--site-muted);
+            font-size: 13px;
+            backdrop-filter: blur(6px);
+        }
+        .site-footer strong {
+            color: var(--site-ink);
+            font-weight: 600;
+        }
+        .scroll-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            border: 0;
+            border-radius: 999px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(120deg, var(--site-brand), var(--site-brand-deep));
+            color: #fff;
+            box-shadow: var(--shadow-soft);
+            cursor: pointer;
+            display: none;
+            z-index: 60;
+        }
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 74px;
+            background: #1b2c43;
+            color: #fff;
+            padding: 11px 13px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft);
+            font-size: 13px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+            z-index: 70;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        body.theme-dark .toast {
+            background: #2d486a;
+        }
+        @media (max-width: 920px) {
+            .site-header .inner {
+                flex-wrap: wrap;
+            }
+            .menu-toggle {
+                display: inline-block;
+            }
+            .nav {
+                width: 100%;
+                display: none;
+                margin-top: 8px;
+            }
+            .nav.open {
+                display: flex;
+            }
+            .header-actions {
+                margin-left: auto;
+            }
+        }
+    </style>
+    {% block page_styles %}{% endblock %}
+</head>
+<body>
+<header class="site-header">
+    <div class="inner">
+        <div class="header-left">
+            <button class="menu-toggle" type="button" id="menuToggle">Menu</button>
+            <div class="brand">DjangoProject4</div>
+        </div>
+        <nav class="nav" id="mainNav">
+            <a href="{% url 'home' %}" class="{% if request.path == '/' or request.path == '/customer-data/' %}active{% endif %}">Home</a>
+            <a href="{% url 'submissions' %}" class="{% if request.path|slice:':12' == '/submissions/' %}active{% endif %}">Submissions</a>
+            <a href="{% url 'submissions_export_csv' %}" class="js-export">Export CSV</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+        </nav>
+        <div class="header-actions">
+            <button class="chip-btn" id="themeToggle" type="button">Theme</button>
+        </div>
+    </div>
+</header>
+
+<main class="page-content">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="inner">
+        <span>&copy; {% now "Y" %} <strong>DjangoProject4</strong></span>
+        <span>Contact workflow and submissions dashboard</span>
+    </div>
+</footer>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+<button id="scrollTopBtn" class="scroll-top" type="button" aria-label="Back to top">↑</button>
+
+<script>
+    const mainNav = document.getElementById("mainNav");
+    const menuToggle = document.getElementById("menuToggle");
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener("click", function () {
+            mainNav.classList.toggle("open");
+        });
+    }
+
+    const themeToggle = document.getElementById("themeToggle");
+    const rootBody = document.body;
+    const savedTheme = localStorage.getItem("site_theme");
+    if (savedTheme === "dark") {
+        rootBody.classList.add("theme-dark");
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener("click", function () {
+            rootBody.classList.toggle("theme-dark");
+            localStorage.setItem("site_theme", rootBody.classList.contains("theme-dark") ? "dark" : "light");
+        });
+    }
+
+    const toast = document.getElementById("toast");
+    function showToast(message) {
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(window.__toastTimer);
+        window.__toastTimer = window.setTimeout(function () {
+            toast.classList.remove("show");
+        }, 1600);
+    }
+
+    document.querySelectorAll(".js-export").forEach(function (el) {
+        el.addEventListener("click", function (event) {
+            const ok = window.confirm("Do you want to download the submissions CSV file?");
+            if (!ok) {
+                event.preventDefault();
+            } else {
+                showToast("Starting CSV download...");
+            }
+        });
+    });
+
+    document.querySelectorAll(".js-copy").forEach(function (el) {
+        el.addEventListener("click", function () {
+            const value = el.getAttribute("data-copy") || "";
+            navigator.clipboard.writeText(value).then(function () {
+                showToast("Copied to clipboard");
+            });
+        });
+    });
+
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+    function toggleScrollTop() {
+        if (!scrollTopBtn) return;
+        scrollTopBtn.style.display = window.scrollY > 220 ? "block" : "none";
+    }
+    window.addEventListener("scroll", toggleScrollTop);
+    toggleScrollTop();
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+</script>
+{% block page_scripts %}{% endblock %}
+</body>
+</html>

@@ -22,11 +22,9 @@ from django.urls import path
 from updateData import views
 
 urlpatterns = [
-    #    path('admin/', admin.site.urls),
+    path("", views.customerData, name="home"),
     path('customer-data/',views.customerData,name='customerData'),
-    #path('submit/', views.submit_form, name='submit_form'),  # For form submission
     path('success/', views.success, name='success'),
-
-
-
+    path("submissions/", views.submissions, name="submissions"),
+    path("submissions/export.csv", views.export_submissions_csv, name="submissions_export_csv"),
 ]
